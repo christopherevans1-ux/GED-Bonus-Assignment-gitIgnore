@@ -4,11 +4,15 @@ using UnityEngine;
 
 public class Snake : MonoBehaviour
 {
-    Vector2 direction;
+    public Vector2 direction;
+    public GameObject segment;
+    public GameObject gameManager;
+    List<GameObject> segments = new List<GameObject>();
     // Start is called before the first frame update
     void Start()
     {
-        reset();
+        gameManager = GameObject.Find("GameManager");
+        gameManager.GetComponent<Chapter.Singleton.GameManager>().deathRestart();
     }
 
     // Update is called once per frame
@@ -19,6 +23,7 @@ public class Snake : MonoBehaviour
     private void FixedUpdate()
     {
         moveSnake();
+        moveSegments();
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -26,14 +31,10 @@ public class Snake : MonoBehaviour
         {
             Time.timeScale = 0;
         }
-    }
-
-    public void reset()
-    {
-        transform.position = new Vector2(0, -1);
-        transform.rotation = Quaternion.Euler(0, 0, -90);
-        direction = Vector2.right;
-        Time.timeScale = 0.05f;
+        else if(collision.tag == "Food")
+        {
+            grow();
+        }
     }
 
     public void moveSnake()
@@ -65,9 +66,35 @@ public class Snake : MonoBehaviour
             direction = Vector2.left;
             transform.rotation = Quaternion.Euler(0, 0, 90);
         }
-        else if (Input.GetKeyDown(KeyCode.R))
+    }
+
+    public void resetSegments()
+    {
+        for(int i = 1; i < segments.Count; i++)
         {
-            reset();
+            Destroy(segments[i].gameObject);
+        }
+        segments.Clear();
+        segments.Add(gameObject);
+
+        for (int i = 0; i < 3; i++)
+        {
+            grow();
+        }
+    }
+
+    void grow()
+    {
+        GameObject newSegment = Instantiate(segment);
+        newSegment.transform.position = segments[segments.Count - 1].transform.position;
+        segments.Add(newSegment);
+    }
+
+    void moveSegments()
+    {
+        for(int i = segments.Count - 1; i > 0; i--)
+        {
+            segments[i].transform.position = segments[i - 1].transform.position;
         }
     }
 }
