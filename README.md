@@ -28,5 +28,4 @@ Implemented by first creating a singleton script. This acts as a basis for the m
 ---
 # References
 ---
-<!-- Identify sources used to create any gameplay logic or programming pattern
-implementations. -->
+Singleton script was pulled from my In-Class project where I created the singleton for the in-class assignment
